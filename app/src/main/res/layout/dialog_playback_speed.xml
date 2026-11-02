@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/speed_bottom_sheet_bg"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:id="@+id/dragHandle"
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/drag_handle_bg" />
+
+    <!-- Current Speed Label -->
+    <TextView
+        android:id="@+id/txtSpeedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:text="1.00x"
+        android:textColor="#FF0F0F0F"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <!-- Slider & Controls Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:layout_marginBottom="16dp">
+
+        <!-- Minus Button -->
+        <FrameLayout
+            android:id="@+id/btnSpeedMinus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/speed_circle_btn_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="−"
+                android:textColor="#FF0F0F0F"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <!-- Speed Seek Bar -->
+        <SeekBar
+            android:id="@+id/seekSpeed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="12dp"
+            android:max="55"
+            android:progress="15"
+            android:progressDrawable="@drawable/speed_slider_track"
+            android:thumb="@drawable/speed_slider_thumb"
+            android:splitTrack="false"
+            android:paddingVertical="12dp" />
+
+        <!-- Plus Button -->
+        <FrameLayout
+            android:id="@+id/btnSpeedPlus"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/speed_circle_btn_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="+"
+                android:textColor="#FF0F0F0F"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- Preset Speed Chips Row -->
+    <HorizontalScrollView
+        android:id="@+id/scrollChips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:fillViewport="true"
+        android:paddingHorizontal="12dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingVertical="4dp">
+
+            <!-- 0.25x -->
+            <LinearLayout
+                android:id="@+id/container_0_25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_0_25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="50dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="0.25"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 0.5x -->
+            <LinearLayout
+                android:id="@+id/container_0_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_0_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="50dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="0.5"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 0.75x -->
+            <LinearLayout
+                android:id="@+id/container_0_75"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_0_75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="50dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="0.75"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 1.0x (Normal) -->
+            <LinearLayout
+                android:id="@+id/container_1_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_1_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="52dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="1.0"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/txtNormalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="2dp"
+                    android:text="Normal"
+                    android:textColor="#FF666666"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 1.25x -->
+            <LinearLayout
+                android:id="@+id/container_1_25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_1_25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="52dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="1.25"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 1.5x -->
+            <LinearLayout
+                android:id="@+id/container_1_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_1_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="52dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="1.5"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 1.75x -->
+            <LinearLayout
+                android:id="@+id/container_1_75"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_1_75"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="52dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="1.75"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 2.0x -->
+            <LinearLayout
+                android:id="@+id/container_2_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_2_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="52dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="14dp"
+                    android:text="2.0"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- 3.0x with badge -->
+            <LinearLayout
+                android:id="@+id/container_3_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/chip_3_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:minWidth="56dp"
+                    android:background="@drawable/speed_chip_bg_normal"
+                    android:gravity="center"
+                    android:paddingHorizontal="10dp"
+                    android:text="3.0"
+                    android:textColor="#FF0F0F0F"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/ic_speed_badge"
+                    android:drawablePadding="4dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:text=""
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</LinearLayout>

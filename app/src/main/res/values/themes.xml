@@ -42,4 +42,15 @@
         <item name="android:drawablePadding">4dp</item>
         <item name="android:padding">8dp</item>
     </style>
+
+    <!-- Custom Bottom Sheet Dialog for Playback Speed -->
+    <style name="CustomBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:navigationBarColor">#FFFFFFFF</item>
+    </style>
+
+    <style name="CustomBottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

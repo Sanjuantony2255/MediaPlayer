@@ -64,6 +64,27 @@
                     android:tint="@color/yt_white"
                     android:scaleType="centerInside" />
 
+                <!-- Playback Speed (P) Button -->
+                <FrameLayout
+                    android:id="@+id/btnPlaybackSpeed"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginHorizontal="2dp"
+                    android:background="@drawable/p_button_bg"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/txtPlaybackSpeedBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="P"
+                        android:textColor="@color/yt_white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+
                 <ImageButton
                     android:id="@+id/btnSettings"
                     android:layout_width="40dp"

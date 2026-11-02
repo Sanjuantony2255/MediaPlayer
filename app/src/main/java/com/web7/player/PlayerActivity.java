@@ -26,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class PlayerActivity extends AppCompatActivity {
     private ImageButton btnPlayPause, btnBack, btnFullscreen, btnPip;
     private ImageButton btnRewind, btnForward, btnPrev, btnNext;
     private ImageButton btnSettings, btnAutoplay;
+    private FrameLayout btnPlaybackSpeed;
+    private TextView txtPlaybackSpeedBadge;
     private SeekBar seekBar;
     private TextView txtCurrentTime, txtTotalTime, txtPlayerTitle;
 
@@ -61,7 +65,8 @@ public class PlayerActivity extends AppCompatActivity {
     private TextView txtVideoTitle, txtVideoInfo, txtChannelName, txtSubscribers;
     private TextView txtDescription, txtShowMore, txtCommentCount;
     private TextView txtLikeCount;
-    private LinearLayout btnLike, btnShare, btnDownload, btnSave;
+    private LinearLayout btnLike, btnShare, btnDownload, btnSave, btnPlaybackSpeedAction;
+    private TextView txtSpeedActionText;
     private LinearLayout descriptionSection;
     private Button btnSubscribe;
     private EditText edtComment;
@@ -157,6 +162,10 @@ public class PlayerActivity extends AppCompatActivity {
         btnNext = findViewById(R.id.btnNext);
         btnSettings = findViewById(R.id.btnSettings);
         btnAutoplay = findViewById(R.id.btnAutoplay);
+        btnPlaybackSpeed = findViewById(R.id.btnPlaybackSpeed);
+        txtPlaybackSpeedBadge = findViewById(R.id.txtPlaybackSpeedBadge);
+        btnPlaybackSpeedAction = findViewById(R.id.btnPlaybackSpeedAction);
+        txtSpeedActionText = findViewById(R.id.txtSpeedActionText);
         seekBar = findViewById(R.id.seekBar);
         txtCurrentTime = findViewById(R.id.txtCurrentTime);
         txtTotalTime = findViewById(R.id.txtTotalTime);
@@ -252,6 +261,12 @@ public class PlayerActivity extends AppCompatActivity {
         btnNext.setOnClickListener(v -> playNext());
 
         btnSettings.setOnClickListener(v -> showPlaybackSpeedDialog());
+        if (btnPlaybackSpeed != null) {
+            btnPlaybackSpeed.setOnClickListener(v -> showPlaybackSpeedDialog());
+        }
+        if (btnPlaybackSpeedAction != null) {
+            btnPlaybackSpeedAction.setOnClickListener(v -> showPlaybackSpeedDialog());
+        }
 
         btnAutoplay.setOnClickListener(v ->
                 Toast.makeText(this, "Autoplay toggled", Toast.LENGTH_SHORT).show());
@@ -688,30 +703,136 @@ public class PlayerActivity extends AppCompatActivity {
     // ===== Playback Speed Controls =====
 
     private void showPlaybackSpeedDialog() {
-        int selectedIndex = 0;
-        for (int i = 0; i < PLAYBACK_SPEEDS.length; i++) {
-            if (Math.abs(PLAYBACK_SPEEDS[i] - currentPlaybackSpeed) < 0.05f) {
-                selectedIndex = i;
-                break;
+        BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.CustomBottomSheetDialog);
+        View sheetView = getLayoutInflater().inflate(R.layout.dialog_playback_speed, null);
+        dialog.setContentView(sheetView);
+
+        // Ensure transparent window/background around rounded corners
+        if (dialog.getWindow() != null) {
+            View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            if (bottomSheet != null) {
+                bottomSheet.setBackgroundResource(android.R.color.transparent);
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_Web7);
-        builder.setTitle("Playback Speed");
-        builder.setSingleChoiceItems(PLAYBACK_SPEED_LABELS, selectedIndex, (dialog, which) -> {
-            setPlaybackSpeed(PLAYBACK_SPEEDS[which]);
-            dialog.dismiss();
+        TextView txtSpeedValue = sheetView.findViewById(R.id.txtSpeedValue);
+        FrameLayout btnSpeedMinus = sheetView.findViewById(R.id.btnSpeedMinus);
+        FrameLayout btnSpeedPlus = sheetView.findViewById(R.id.btnSpeedPlus);
+        SeekBar seekSpeed = sheetView.findViewById(R.id.seekSpeed);
+
+        final float[] presetSpeeds = {0.25f, 0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 1.75f, 2.0f, 3.0f};
+        final TextView[] chipViews = {
+                sheetView.findViewById(R.id.chip_0_25),
+                sheetView.findViewById(R.id.chip_0_5),
+                sheetView.findViewById(R.id.chip_0_75),
+                sheetView.findViewById(R.id.chip_1_0),
+                sheetView.findViewById(R.id.chip_1_25),
+                sheetView.findViewById(R.id.chip_1_5),
+                sheetView.findViewById(R.id.chip_1_75),
+                sheetView.findViewById(R.id.chip_2_0),
+                sheetView.findViewById(R.id.chip_3_0)
+        };
+
+        // Range: 0.25x to 3.00x in 0.05x steps -> 55 steps
+        final int MAX_STEPS = 55;
+        seekSpeed.setMax(MAX_STEPS);
+
+        int initialProgress = Math.round((currentPlaybackSpeed - 0.25f) / 0.05f);
+        if (initialProgress < 0) initialProgress = 0;
+        if (initialProgress > MAX_STEPS) initialProgress = MAX_STEPS;
+        seekSpeed.setProgress(initialProgress);
+
+        updatePlaybackSpeedSheetUI(currentPlaybackSpeed, txtSpeedValue, chipViews, presetSpeeds);
+
+        seekSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                float speed = 0.25f + progress * 0.05f;
+                speed = Math.round(speed * 100.0f) / 100.0f;
+                updatePlaybackSpeedSheetUI(speed, txtSpeedValue, chipViews, presetSpeeds);
+                setPlaybackSpeedInternal(speed, false);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
-        builder.setNegativeButton("Cancel", null);
-        AlertDialog dialog = builder.create();
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawableResource(R.drawable.rounded_card_bg);
+
+        btnSpeedMinus.setOnClickListener(v -> {
+            int currentProg = seekSpeed.getProgress();
+            if (currentProg > 0) {
+                seekSpeed.setProgress(currentProg - 1);
+            }
+        });
+
+        btnSpeedPlus.setOnClickListener(v -> {
+            int currentProg = seekSpeed.getProgress();
+            if (currentProg < MAX_STEPS) {
+                seekSpeed.setProgress(currentProg + 1);
+            }
+        });
+
+        for (int i = 0; i < presetSpeeds.length; i++) {
+            final int index = i;
+            if (chipViews[i] != null) {
+                chipViews[i].setOnClickListener(v -> {
+                    float speed = presetSpeeds[index];
+                    int prog = Math.round((speed - 0.25f) / 0.05f);
+                    seekSpeed.setProgress(prog);
+                });
+            }
         }
+
+        // Auto-scroll to selected chip if needed
+        HorizontalScrollView scrollChips = sheetView.findViewById(R.id.scrollChips);
+        if (scrollChips != null && initialProgress >= 15) {
+            scrollChips.post(() -> {
+                View selectedContainer = sheetView.findViewById(R.id.container_1_0);
+                if (currentPlaybackSpeed >= 2.0f) {
+                    selectedContainer = sheetView.findViewById(R.id.container_2_0);
+                } else if (currentPlaybackSpeed >= 1.5f) {
+                    selectedContainer = sheetView.findViewById(R.id.container_1_5);
+                } else if (currentPlaybackSpeed >= 1.25f) {
+                    selectedContainer = sheetView.findViewById(R.id.container_1_25);
+                }
+                if (selectedContainer != null) {
+                    int scrollX = selectedContainer.getLeft() - (scrollChips.getWidth() / 4);
+                    scrollChips.smoothScrollTo(Math.max(0, scrollX), 0);
+                }
+            });
+        }
+
         dialog.show();
     }
 
+    private void updatePlaybackSpeedSheetUI(float speed, TextView txtSpeedValue, TextView[] chipViews, float[] presetSpeeds) {
+        if (txtSpeedValue != null) {
+            txtSpeedValue.setText(String.format(java.util.Locale.US, "%.2fx", speed));
+        }
+
+        for (int i = 0; i < presetSpeeds.length; i++) {
+            if (chipViews[i] != null) {
+                boolean isSelected = Math.abs(presetSpeeds[i] - speed) < 0.025f;
+                if (isSelected) {
+                    chipViews[i].setBackgroundResource(R.drawable.speed_chip_bg_selected);
+                    chipViews[i].setTextColor(0xFFFFFFFF);
+                } else {
+                    chipViews[i].setBackgroundResource(R.drawable.speed_chip_bg_normal);
+                    chipViews[i].setTextColor(0xFF0F0F0F);
+                }
+            }
+        }
+    }
+
     public void setPlaybackSpeed(float speed) {
+        setPlaybackSpeedInternal(speed, true);
+    }
+
+    public void setPlaybackSpeedInternal(float speed, boolean showToast) {
         this.currentPlaybackSpeed = speed;
+        updateSpeedBadge(speed);
         if (activeMediaPlayer != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try {
                 boolean wasPlaying = videoView.isPlaying();
@@ -724,13 +845,32 @@ public class PlayerActivity extends AppCompatActivity {
                 if (!wasPlaying) {
                     videoView.pause();
                 }
-                Toast.makeText(this, "Speed set to " + speed + "x", Toast.LENGTH_SHORT).show();
+                if (showToast) {
+                    Toast.makeText(this, "Speed set to " + speed + "x", Toast.LENGTH_SHORT).show();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(this, "Playback speed " + speed + "x not supported on this video codec", Toast.LENGTH_SHORT).show();
+                if (showToast) {
+                    Toast.makeText(this, "Playback speed " + speed + "x not supported on this video codec", Toast.LENGTH_SHORT).show();
+                }
             }
-        } else {
+        } else if (showToast) {
             Toast.makeText(this, "Speed set to " + speed + "x", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateSpeedBadge(float speed) {
+        String badgeText;
+        if (Math.abs(speed - 1.0f) < 0.02f) {
+            badgeText = "P";
+        } else {
+            badgeText = (speed == (int) speed) ? String.format(java.util.Locale.US, "%dx", (int) speed) : String.format(java.util.Locale.US, "%.2fx", speed);
+        }
+        if (txtPlaybackSpeedBadge != null) {
+            txtPlaybackSpeedBadge.setText(badgeText);
+        }
+        if (txtSpeedActionText != null) {
+            txtSpeedActionText.setText(Math.abs(speed - 1.0f) < 0.02f ? "Speed" : badgeText);
         }
     }
 

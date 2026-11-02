@@ -35,13 +35,13 @@ jobs:
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: Web7-Player-Debug
+          name: emulator-ad-Debug
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Web7-Player-Release-Unsigned
+          name: emulator-ad-Release-Unsigned
           path: app/build/outputs/apk/release/*.apk
           retention-days: 30

@@ -1,8 +1,6 @@
-# Web7 Media Player 🎬
+# emulator ad 🎬
 
-A modern, high-performance Android Video Player built with a sleek **YouTube-inspired UI/UX** for playing your local offline videos.
-
-![Web7 Banner](https://raw.githubusercontent.com/Sanjuantony2255/MediaPlayer/main/app/src/main/res/drawable/ic_launcher_foreground.xml)
+A modern, high-performance Android Video Player built with a sleek **YouTube-inspired UI/UX** for playing all your local offline videos.
 
 ---
 
@@ -10,23 +8,35 @@ A modern, high-performance Android Video Player built with a sleek **YouTube-ins
 
 - 🎥 **YouTube-Style Feed & Player**:
   - Clean dark-mode YouTube interface.
-  - Video feed displaying local videos with auto-generated high-res thumbnails, titles, duration badges, and metadata.
-  - Search bar to instantly filter videos by name.
-  - Filter chips (All, Recent, Large Files, Videos).
-- 📺 **Rich Video Playback**:
+  - Video feed displaying all local videos with auto-generated high-res thumbnails, titles, duration badges, and metadata.
+  - Real-time search bar to filter videos by name or folder.
+  - Filter chips (All, Recent, Large Files, Folders).
+- ⚡ **All Video Formats Supported**:
+  - Full support for `.mp4`, `.mkv`, `.webm`, `.avi`, `.mov`, `.flv`, `.wmv`, `.3gp`, `.ts`, `.m4v`, `.vob`, `.ogv`, and more.
+  - Deep scanner scanning MediaStore Video, MediaStore Files, and internal/external storage folders (ideal for BlueStacks and emulators).
+  - Open any video file directly from third-party file managers or downloads.
+- ⏩ **Comprehensive Playback Speeds**:
+  - YouTube-style playback speed selector:
+    - **1x (Normal)**
+    - **1.25x**
+    - **1.5x**
+    - **1.7x**
+    - **2x**
+    - **2.25x**
+    - **2.5x**
+    - **3x**
+  - Instant hardware-accelerated speed adjustment with auto pitch preservation.
+- 📺 **Rich Playback Controls & Fullscreen**:
   - Immersive full-screen and landscape mode with auto/manual rotation.
-  - Full player controls (Play/Pause, Rewind 10s, Forward 10s, Next/Prev video).
-  - Modern YouTube red scrub bar with duration indicator.
-  - Playback speed selection (0.25x, 0.5x, 0.75x, 1.0x, 1.25x, 1.5x, 1.75x, 2.0x).
+  - Complete gesture & touch controls: double-tap left to rewind 10s, double-tap right to forward 10s.
+  - Next/Previous video navigation.
+  - Precise YouTube red scrubber bar.
 - 🖼️ **Picture-in-Picture (PiP)**:
-  - Seamless background & floating PiP mode to watch videos while using other apps.
+  - Floating background PiP window to watch videos while using other apps.
 - 💬 **Interactive Engagement Simulation**:
   - YouTube-style like/dislike buttons, share, and subscribe buttons.
-  - Simulated interactive comments section (add and view comments for any video).
+  - Interactive local comments section.
   - Related videos recommendation list beneath the active video.
-- ⚡ **Local File System Integration**:
-  - High-speed device media scanner (`MediaStore`).
-  - No internet connection required for playing your local videos.
 
 ---
 
@@ -38,7 +48,7 @@ Every push to this repository automatically builds the latest APK using **GitHub
 1. Navigate to the **[Actions Tab](https://github.com/Sanjuantony2255/MediaPlayer/actions)** on GitHub.
 2. Click on the latest workflow run: **Build Android APK**.
 3. Scroll down to the **Artifacts** section at the bottom of the summary page.
-4. Download **`Web7-Player-Debug`** (or **`Web7-Player-Release-Unsigned`**), unzip it, and install `app-debug.apk` directly onto your Android device!
+4. Download **`emulator-ad-Debug`** (or **`emulator-ad-Release-Unsigned`**), unzip it, and install `app-debug.apk` directly onto your Android device or emulator!
 
 ---
 
@@ -49,7 +59,7 @@ Every push to this repository automatically builds the latest APK using **GitHub
    git clone https://github.com/Sanjuantony2255/MediaPlayer.git
    cd MediaPlayer
    ```
-2. Open with **Android Studio** (Hedgehog or newer) or build from terminal:
+2. Build debug APK:
    ```bash
    ./gradlew assembleDebug
    ```

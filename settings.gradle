@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Web7"
+rootProject.name = "emulator ad"
 include ':app'

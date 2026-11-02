@@ -5,9 +5,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
+import android.media.MediaMetadataRetriever;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import androidx.appcompat.app.AlertDialog;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Rational;
@@ -80,6 +84,21 @@ public class PlayerActivity extends AppCompatActivity {
     private ArrayList<String> videoTitles;
     private int currentPosition;
 
+    // Playback Speed Options
+    private static final float[] PLAYBACK_SPEEDS = {1.0f, 1.25f, 1.5f, 1.7f, 2.0f, 2.25f, 2.5f, 3.0f};
+    private static final String[] PLAYBACK_SPEED_LABELS = {
+            "1x (Normal)",
+            "1.25x",
+            "1.5x",
+            "1.7x",
+            "2x",
+            "2.25x",
+            "2.5x",
+            "3x"
+    };
+    private float currentPlaybackSpeed = 1.0f;
+    private MediaPlayer activeMediaPlayer;
+
     // Gestures
     private GestureDetector gestureDetector;
 
@@ -103,6 +122,20 @@ public class PlayerActivity extends AppCompatActivity {
 
         if (currentVideo != null) {
             loadVideo(currentVideo);
+        } else if (getIntent().getData() != null) {
+            loadVideoFromUri(getIntent().getData());
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        currentVideo = (VideoItem) intent.getSerializableExtra("video");
+        if (currentVideo != null) {
+            loadVideo(currentVideo);
+        } else if (intent.getData() != null) {
+            loadVideoFromUri(intent.getData());
         }
     }
 
@@ -218,8 +251,7 @@ public class PlayerActivity extends AppCompatActivity {
         btnPrev.setOnClickListener(v -> playPrevious());
         btnNext.setOnClickListener(v -> playNext());
 
-        btnSettings.setOnClickListener(v ->
-                Toast.makeText(this, "Playback Settings", Toast.LENGTH_SHORT).show());
+        btnSettings.setOnClickListener(v -> showPlaybackSpeedDialog());
 
         btnAutoplay.setOnClickListener(v ->
                 Toast.makeText(this, "Autoplay toggled", Toast.LENGTH_SHORT).show());
@@ -249,7 +281,16 @@ public class PlayerActivity extends AppCompatActivity {
 
         // VideoView listeners
         videoView.setOnPreparedListener(mp -> {
+            activeMediaPlayer = mp;
             mp.setLooping(false);
+            if (currentPlaybackSpeed != 1.0f && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                try {
+                    PlaybackParams params = mp.getPlaybackParams();
+                    if (params == null) params = new PlaybackParams();
+                    params.setSpeed(currentPlaybackSpeed);
+                    mp.setPlaybackParams(params);
+                } catch (Exception ignored) {}
+            }
             txtTotalTime.setText(formatTime(videoView.getDuration()));
             seekBar.setMax(1000);
             startProgressUpdater();
@@ -349,13 +390,18 @@ public class PlayerActivity extends AppCompatActivity {
     private void loadVideo(VideoItem video) {
         currentVideo = video;
 
-        // Set video source
+        // Set video source supporting all paths & URIs
         try {
-            videoView.setVideoPath(video.getPath());
+            String path = video.getPath();
+            if (path != null && (path.startsWith("content://") || path.startsWith("android.resource://") || path.startsWith("file://"))) {
+                videoView.setVideoURI(Uri.parse(path));
+            } else if (path != null) {
+                videoView.setVideoPath(path);
+            }
             videoView.start();
             btnPlayPause.setImageResource(android.R.drawable.ic_media_pause);
         } catch (Exception e) {
-            Toast.makeText(this, "Cannot play this video", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Cannot play this video format", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -381,7 +427,7 @@ public class PlayerActivity extends AppCompatActivity {
                 "📦 Size: " + video.getFormattedSize() + "\n" +
                 "⏱ Duration: " + video.getFormattedDuration() + "\n" +
                 "📂 Location: " + video.getPath() + "\n\n" +
-                "Played with Web7 - Your local video player with YouTube experience.";
+                "Played with emulator ad - Your local video player with YouTube experience.";
         txtDescription.setText(desc);
 
         // Load related videos
@@ -636,6 +682,103 @@ public class PlayerActivity extends AppCompatActivity {
             enterFullscreen();
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             exitFullscreen();
+        }
+    }
+
+    // ===== Playback Speed Controls =====
+
+    private void showPlaybackSpeedDialog() {
+        int selectedIndex = 0;
+        for (int i = 0; i < PLAYBACK_SPEEDS.length; i++) {
+            if (Math.abs(PLAYBACK_SPEEDS[i] - currentPlaybackSpeed) < 0.05f) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_Web7);
+        builder.setTitle("Playback Speed");
+        builder.setSingleChoiceItems(PLAYBACK_SPEED_LABELS, selectedIndex, (dialog, which) -> {
+            setPlaybackSpeed(PLAYBACK_SPEEDS[which]);
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(R.drawable.rounded_card_bg);
+        }
+        dialog.show();
+    }
+
+    public void setPlaybackSpeed(float speed) {
+        this.currentPlaybackSpeed = speed;
+        if (activeMediaPlayer != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                boolean wasPlaying = videoView.isPlaying();
+                PlaybackParams params = activeMediaPlayer.getPlaybackParams();
+                if (params == null) {
+                    params = new PlaybackParams();
+                }
+                params.setSpeed(speed);
+                activeMediaPlayer.setPlaybackParams(params);
+                if (!wasPlaying) {
+                    videoView.pause();
+                }
+                Toast.makeText(this, "Speed set to " + speed + "x", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Playback speed " + speed + "x not supported on this video codec", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Speed set to " + speed + "x", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadVideoFromUri(Uri uri) {
+        if (uri == null) return;
+        try {
+            VideoItem video = new VideoItem();
+            String path = uri.getPath();
+            String title = "Video";
+
+            if ("content".equalsIgnoreCase(uri.getScheme())) {
+                try (android.database.Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        int nameIdx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        if (nameIdx >= 0) {
+                            title = cursor.getString(nameIdx);
+                        }
+                        int sizeIdx = cursor.getColumnIndex(OpenableColumns.SIZE);
+                        if (sizeIdx >= 0) {
+                            video.setSize(cursor.getLong(sizeIdx));
+                        }
+                    }
+                } catch (Exception ignored) {}
+            } else if (path != null) {
+                File f = new File(path);
+                title = f.getName();
+                video.setSize(f.length());
+            }
+
+            video.setTitle(title);
+            video.setDisplayName(title);
+            video.setPath(uri.toString());
+
+            try {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(this, uri);
+                String dur = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                if (dur != null) video.setDuration(Long.parseLong(dur));
+                String w = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
+                String h = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
+                if (w != null && h != null) video.setResolution(w + "x" + h);
+                retriever.release();
+            } catch (Exception ignored) {}
+
+            loadVideo(video);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to load video: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

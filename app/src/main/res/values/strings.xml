@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Web7</string>
+    <string name="app_name">emulator ad</string>
     <string name="search_hint">Search videos</string>
     <string name="no_videos_found">No videos found on device</string>
     <string name="grant_permission">Grant Permission</string>

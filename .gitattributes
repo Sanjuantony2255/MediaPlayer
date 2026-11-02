@@ -1,0 +1,6 @@
+# Force gradlew and shell scripts to use LF line endings
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Auto-detect text files and normalize line endings
+* text=auto

@@ -1,0 +1,45 @@
+<resources>
+    <!-- Base YouTube Dark Theme -->
+    <style name="Theme.Web7" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/yt_red</item>
+        <item name="colorPrimaryDark">@color/yt_black</item>
+        <item name="colorAccent">@color/yt_red</item>
+        <item name="android:windowBackground">@color/yt_dark_bg</item>
+        <item name="android:statusBarColor">@color/yt_black</item>
+        <item name="android:navigationBarColor">@color/yt_bottom_nav</item>
+        <item name="android:textColorPrimary">@color/yt_white</item>
+        <item name="android:textColorSecondary">@color/yt_light_gray</item>
+        <item name="android:colorBackground">@color/yt_dark_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Player Theme - immersive -->
+    <style name="Theme.Web7.Player">
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/yt_black</item>
+        <item name="android:statusBarColor">@color/yt_black</item>
+        <item name="android:navigationBarColor">@color/yt_black</item>
+    </style>
+
+    <!-- YouTube-style chip -->
+    <style name="ChipStyle">
+        <item name="android:background">@drawable/chip_background</item>
+        <item name="android:textColor">@color/yt_chip_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <!-- Action Button style -->
+    <style name="ActionButtonStyle">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/yt_white</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:drawablePadding">4dp</item>
+        <item name="android:padding">8dp</item>
+    </style>
+</resources>

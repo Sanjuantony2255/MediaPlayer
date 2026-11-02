@@ -1,0 +1,27 @@
+<resources>
+    <color name="yt_black">#FF0F0F0F</color>
+    <color name="yt_dark_bg">#FF181818</color>
+    <color name="yt_dark_surface">#FF212121</color>
+    <color name="yt_dark_card">#FF272727</color>
+    <color name="yt_dark_elevated">#FF2F2F2F</color>
+    <color name="yt_red">#FFFF0000</color>
+    <color name="yt_red_dark">#FFCC0000</color>
+    <color name="yt_white">#FFFFFFFF</color>
+    <color name="yt_light_gray">#FFAAAAAA</color>
+    <color name="yt_medium_gray">#FF717171</color>
+    <color name="yt_dark_gray">#FF383838</color>
+    <color name="yt_divider">#FF3D3D3D</color>
+    <color name="yt_blue">#FF3EA6FF</color>
+    <color name="yt_chip_bg">#FF373737</color>
+    <color name="yt_chip_selected">#FFFFFFFF</color>
+    <color name="yt_chip_text">#FFFFFFFF</color>
+    <color name="yt_chip_selected_text">#FF0F0F0F</color>
+    <color name="yt_bottom_nav">#FF212121</color>
+    <color name="yt_seekbar_played">#FFFF0000</color>
+    <color name="yt_seekbar_buffered">#66FFFFFF</color>
+    <color name="yt_seekbar_unplayed">#33FFFFFF</color>
+    <color name="yt_transparent">#00000000</color>
+    <color name="yt_overlay">#99000000</color>
+    <color name="yt_like_blue">#FF3EA6FF</color>
+    <color name="yt_subscribe_red">#FFFF0000</color>
+</resources>
